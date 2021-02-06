@@ -1,0 +1,34 @@
+[package]
+name = "bitswap"
+version = "0.1.0"
+authors = ["macrocan <zhong_xiaohong@yeah.net>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[features]
+async-std = ["libp2p-rs/rt-async-std", "libp2p-rs/swarm-async-std"]
+#async-std = ["libp2prs-swarm/async-std", "libp2prs-runtime/async-std"]
+#tokio = ["libp2prs-swarm/tokio", "libp2prs-runtime/tokio"]
+
+[dependencies]
+async-trait = "0.1"
+cid = { default-features = false, version = "0.5" }
+futures = { version = "0.3", features = ["std"], default-features = false }
+multihash = { default-features = false, version = "0.11" }
+unsigned-varint = { default-features = false, version = "0.3" }
+libp2p-rs = { git = "https://github.com/kingwel-xie/libp2p-rs.git", branch = "master", default-features = false, optional = true }
+#libp2prs-core = { path = "../../kingwel-xie/libp2p-rs/core", version = "0.2.1" }
+#libp2prs-runtime = { path = "../../kingwel-xie/libp2p-rs/runtime", version = "0.2.1", optional = true }
+#libp2prs-swarm = { path = "../../kingwel-xie/libp2p-rs/swarm", version = "0.2.1", optional = true }
+#libp2prs-traits = { path = "../../kingwel-xie/libp2p-rs/traits", version = "0.2.1" }
+log = "0.4"
+prost = { version = "0.7", features = ["std"], default-features = false }
+thiserror = "1.0"
+
+[build-dependencies]
+prost-build = "0.7"
+
+[dev-dependencies]
+env_logger = "0.8"
+libp2p-rs = { git = "https://github.com/kingwel-xie/libp2p-rs.git", branch = "master", features = ["routed-async-std", "secio", "yamux"], default-features = false }
