@@ -22,17 +22,17 @@ pub(crate) enum PeerEvent {
 #[derive(Clone)]
 pub struct Handler {
     incoming_tx: mpsc::UnboundedSender<(PeerId, Message)>,
-    new_peer: mpsc::UnboundedSender<PeerEvent>,
+    peer_event: mpsc::UnboundedSender<PeerEvent>,
 }
 
 impl Handler {
     pub(crate) fn new(
         incoming_tx: mpsc::UnboundedSender<(PeerId, Message)>,
-        new_peer: mpsc::UnboundedSender<PeerEvent>,
+        peer_event: mpsc::UnboundedSender<PeerEvent>,
     ) -> Self {
         Handler {
             incoming_tx,
-            new_peer,
+            peer_event,
         }
     }
 }
@@ -48,9 +48,17 @@ impl UpgradeInfo for Handler {
 impl Notifiee for Handler {
     fn connected(&mut self, conn: &mut Connection) {
         let peer_id = conn.remote_peer();
-        let mut new_peers = self.new_peer.clone();
+        let mut peer_event = self.peer_event.clone();
         task::spawn(async move {
-            let _ = new_peers.send(PeerEvent::NewPeer(peer_id)).await;
+            let _ = peer_event.send(PeerEvent::NewPeer(peer_id)).await;
+        });
+    }
+
+    fn disconnected(&mut self, conn: &mut Connection) {
+        let peer_id = conn.remote_peer();
+        let mut peer_event = self.peer_event.clone();
+        task::spawn(async move {
+            let _ = peer_event.send(PeerEvent::DeadPeer(peer_id)).await;
         });
     }
 }

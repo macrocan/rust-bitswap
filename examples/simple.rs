@@ -1,5 +1,3 @@
-use bitswap::Control as Bitswap_Control;
-use bitswap::{Bitswap, Block, BlockStore};
 use cid::Cid;
 use libp2p_rs::core::identity::Keypair;
 use libp2p_rs::core::transport::upgrade::TransportUpgrade;
@@ -14,6 +12,8 @@ use libp2p_rs::swarm::Control as Swarm_Control;
 use libp2p_rs::swarm::Swarm;
 use libp2p_rs::tcp::TcpConfig;
 use libp2p_rs::yamux;
+use rust_bitswap::Control as Bitswap_Control;
+use rust_bitswap::{Bitswap, Block, BlockStore};
 use std::convert::TryFrom;
 use std::error::Error;
 use std::str::FromStr;
@@ -56,6 +56,7 @@ fn run(peer: PeerId, addr: Multiaddr) {
 
         // publish
         loop {
+            println!("Please input cid:");
             let mut line = String::new();
             let _ = std::io::stdin().read_line(&mut line);
             let x: &[_] = &['\r', '\n'];

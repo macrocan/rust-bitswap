@@ -28,14 +28,14 @@ pub struct Bitswap {
     // Used to open stream.
     swarm: Option<Swarm_Control>,
 
-    /// block store
+    // block store
     blockstore: IBlockStore,
 
     // New peer is connected or peer is dead.
     peer_tx: mpsc::UnboundedSender<PeerEvent>,
     peer_rx: mpsc::UnboundedReceiver<PeerEvent>,
 
-    // Used to recv incoming rpc message.
+    // Used to recv incoming message.
     incoming_tx: mpsc::UnboundedSender<(PeerId, Message)>,
     incoming_rx: mpsc::UnboundedReceiver<(PeerId, Message)>,
 
@@ -155,7 +155,6 @@ impl Bitswap {
                     peer_stats.update_outgoing(message.blocks.len() as u64);
                 }
 
-                // send meaasge
                 send_message(&mut self.swarm, peer_id.clone(), message).await;
             }
         }
@@ -192,14 +191,11 @@ impl Bitswap {
         // Process the incoming cancel list.
         for cid in message.cancel() {
             ledger.received_want_list.remove(cid);
+            // remove block from ledger???
         }
 
         // Process the incoming wantlist.
-        for (cid, priority) in message
-            .want()
-            .iter()
-            .filter(|&(cid, _)| !current_wantlist.iter().map(|c| c).any(|c| c == cid))
-        {
+        for (cid, priority) in message.want() {
             ledger.received_want_list.insert(cid.to_owned(), *priority);
             if let Ok(Some(block)) = self.blockstore.get(cid) {
                 ledger.add_block(block);
@@ -207,7 +203,6 @@ impl Bitswap {
         }
 
         // Process the incoming blocks.
-        // TODO: send block to any peer who want
         for block in mem::take(&mut message.blocks) {
             self.handle_received_block(block);
         }
@@ -224,9 +219,13 @@ impl Bitswap {
             })
         });
 
-        // cancel want
+        // Cancel local want and then send block to any peer who want
         for (_peer_id, ledger) in self.connected_peers.iter_mut() {
             ledger.cancel_block(&block.cid);
+            // remove now or wait for cancel message???
+            if ledger.received_want_list.remove(&block.cid).is_some() {
+                ledger.add_block(block.clone());
+            }
         }
     }
 
