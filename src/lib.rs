@@ -7,12 +7,17 @@ mod prefix;
 mod protocol;
 mod stat;
 
-pub use bitswap::Bitswap;
-pub use block::Block;
 use cid::Cid;
-pub use control::Control;
 use std::error::Error;
 use std::fmt::Debug;
+
+pub use bitswap::Bitswap;
+pub use block::Block;
+pub use control::Control;
+pub use ledger::Priority;
+pub use stat::Stats;
+
+//pub use error::BitswapError;
 
 const BS_PROTO_ID: &[u8] = b"/ipfs/bitswap/1.1.0";
 

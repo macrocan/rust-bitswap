@@ -17,11 +17,7 @@ cid = { default-features = false, version = "0.5" }
 futures = { version = "0.3", features = ["std"], default-features = false }
 multihash = { default-features = false, version = "0.11" }
 unsigned-varint = { default-features = false, version = "0.3" }
-libp2p-rs = { git = "https://github.com/kingwel-xie/libp2p-rs.git", branch = "master", default-features = false, optional = true }
-#libp2prs-core = { path = "../../kingwel-xie/libp2p-rs/core", version = "0.2.1" }
-#libp2prs-runtime = { path = "../../kingwel-xie/libp2p-rs/runtime", version = "0.2.1", optional = true }
-#libp2prs-swarm = { path = "../../kingwel-xie/libp2p-rs/swarm", version = "0.2.1", optional = true }
-#libp2prs-traits = { path = "../../kingwel-xie/libp2p-rs/traits", version = "0.2.1" }
+libp2p-rs = { git = "https://github.com/kingwel-xie/libp2p-rs.git", branch = "master", default-features = true, optional = false }
 log = "0.4"
 prost = { version = "0.7", features = ["std"], default-features = false }
 thiserror = "1.0"
@@ -31,4 +27,4 @@ prost-build = "0.7"
 
 [dev-dependencies]
 env_logger = "0.8"
-libp2p-rs = { git = "https://github.com/kingwel-xie/libp2p-rs.git", branch = "master", features = ["routed-async-std", "secio", "yamux"], default-features = false }
+#libp2p-rs = { git = "https://github.com/kingwel-xie/libp2p-rs.git", branch = "master", features = ["routed-async-std", "secio", "yamux"], default-features = false }

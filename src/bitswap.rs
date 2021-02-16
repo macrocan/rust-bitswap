@@ -21,6 +21,7 @@ use std::sync::Arc;
 pub(crate) enum ControlCommand {
     WantBlock(Cid, oneshot::Sender<oneshot::Receiver<Block>>),
     CancelBlock(Cid),
+    WantList(oneshot::Sender<Result<Vec<(Cid, Priority)>>>),
 }
 
 pub struct Bitswap {
@@ -119,6 +120,7 @@ impl Bitswap {
                 match cmd {
                     ControlCommand::WantBlock(_, _) => {}
                     ControlCommand::CancelBlock(_) => {}
+                    ControlCommand::WantList(_) => {}
                 }
             }
         }
@@ -236,6 +238,10 @@ impl Bitswap {
                 let _ = reply.send(rx);
             }
             Some(ControlCommand::CancelBlock(cid)) => self.cancel_block(&cid),
+            Some(ControlCommand::WantList(reply)) => {
+                let list = self.local_wantlist().into_iter().map(|cid| (cid, 1)).collect();
+                let _ = reply.send(Ok(list));
+            },
             None => {}
         }
         Ok(())
